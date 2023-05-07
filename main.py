@@ -13,7 +13,23 @@ def create_random_private_key_hex():
     private_key_hex = hex(private_key_int)[2:].zfill(64)
     return private_key_hex
 
-def get_address(private_key_hex, testnet = True, mainnet = False):
+def get_checksum_hex():
+    # the first 4 bytes of hash256(prefix + private key + comparision byte)
+    checksum = hashlib.sha256(hashlib.sha256(address_bytes).digest()).digest()[:4]
+
+
+def hex_to_wif(hex, prefix = "ef", compressed = True):
+    compressed_hex = ""
+    if compressed:
+        compressed_hex = "01"
+    hex = prefix + hex + compressed_hex 
+    bytes_string = bytes.fromhex(hex)
+    checksum = hashlib.sha256( hashlib.sha256(bytes_string).digest()).digest()[:4]
+    hex = hex + checksum.hex()
+
+    return base58.b58encode(bytes.fromhex(hex)).decode()
+
+def get_address(private_key_hex, type="testnet"):
     # Convert private key from hexadecimal to bytes
     private_key_bytes = bytes.fromhex(private_key_hex)
 
@@ -43,14 +59,24 @@ def get_address(private_key_hex, testnet = True, mainnet = False):
     return address
 
 
-def generate_vanity_address(characters):
+def generate_vanity_address(characters, type = "testnet"):
     while True:
-        address = get_address(create_random_private_key_hex(), testnet=True)
-        if address.startswith("m" + characters):
-            return address  
+        private_key = create_random_private_key_hex()
+        address = get_address(private_key, type="testnet")
+        if address[1:].startswith(characters): # may start with m ,2 ,n
+            return private_key, address
 
 if __name__ == "__main__":
-    characters = sys.argv[1]
-    vanity_address = generate_vanity_address(characters)
-    print("Bitcoin Vanity Address:", vanity_address)
+
+    if len(sys.argv) == 1: # no input
+        # private_key = create_random_private_key_hex()
+        private_key = "064f8f0bebfa2f65db003b56bc911535614f2764799bc89091398c1aed82e884"
+        address = get_address(private_key, type="testnet")
+    else:
+        characters = sys.argv[1]
+        private_key, address = generate_vanity_address(characters, type="testnet")
+        
+    print("Private Key Hex:", private_key)
+    print("Private Key WIF:", hex_to_wif(private_key, compressed=True))
+    print("Bitcoin Address:", address)
 
