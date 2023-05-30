@@ -69,8 +69,8 @@ def generate_vanity_address(characters, type = "testnet"):
 if __name__ == "__main__":
 
     if len(sys.argv) == 1: # no input
-        # private_key = create_random_private_key_hex()
-        private_key = "064f8f0bebfa2f65db003b56bc911535614f2764799bc89091398c1aed82e884"
+        private_key = create_random_private_key_hex()
+        # private_key = "064f8f0bebfa2f65db003b56bc911535614f2764799bc89091398c1aed82e884"
         address = get_address(private_key, type="testnet")
     else:
         characters = sys.argv[1]
