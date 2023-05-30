@@ -24,7 +24,29 @@ After that we generate this random private keys repeatedly to find our desired v
     It is worth noting that while vanity addresses can be fun and personalized, they do not offer any additional security or privacy benefits over randomly generated addresses. In fact, using a vanity address could potentially make it easier for a malicious actor to determine the private key associated with that address, since the custom string of characters could provide additional clues about the key. Therefore, it is important to exercise caution and use best practices when generating and using Bitcoin addresses, regardless of whether they are vanity addresses or not.
 
 You can find results below:
-![test1](./images/q1.p1.png)
+![test1-picture1](./images/q1.p1.png)
 
 And to make sure our address is correct:
-![test1](./images/q1.p2.png)
+![test1-picture2](./images/q1.p2.png)
+
+# Phase 2:
+
+
+# Phase 3:
+
+We want to generate new block after block 9483.
+
+    HASH(BLOCK(9483)) = 00000000cb0356066b1f8d2482c4747e8da716bf355b71f88fad0b3c3bdd62d8 HEX
+
+
+After taht, we create coinbase transaction which is our only transaction and our merkel root is this transactions HASH
+
+Transaction_input = 32 bytes 0
+Transaction_input_index = 0xFFFFFFFF
+Reward = 3.125 BTC
+Coinbase_Data = 810199483MohammadMohajelSadegi
+
+You can see result below:
+
+![test3-picture1](./images/q3.p1.png)
+
