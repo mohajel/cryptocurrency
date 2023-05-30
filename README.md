@@ -31,6 +31,20 @@ And to make sure our address is correct:
 
 # Phase 2:
 
+We use private key and vanity address we generated in question 1:
+
+    Private Key Hex: 
+    b808aa179b0a2849abb2a78ab9a7ad1452170e5c97af06d0dcbbbbbcef89a00c
+    Private Key WIF: cTkSSMQbC9pxYKf1iRPTZ69pjcWP1bS2vAGhDMPV32izxKXtiU6u
+    Bitcoin Address: mmmm5XQyEpcVBPQdwYSWpX2aUi33f7YFRv
+
+Then we get some bitcoin in testnet for our transactions which you can see
+ [here](https://live.blockcypher.com/btc-testnet/address/mmmm5XQyEpcVBPQdwYSWpX2aUi33f7YFRv/)
+
+![test1-picture2](./images/q3.p1.png)
+
+
+
 
 # Phase 3:
 
