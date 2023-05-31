@@ -1,3 +1,5 @@
+# In the Name of God
+
 from bitcoin.wallet import CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
 from bitcoin.core import b2x, Hash

@@ -1,4 +1,4 @@
-# OK
+# In the Name of God
 
 from bitcoin.wallet import CBitcoinAddress, CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
@@ -9,7 +9,7 @@ from utils import *
 bitcoin.SelectParams("testnet")
 my_private_key = CBitcoinSecret(
     "cNuJHQPJ417DT55KgNbvVNzKXXLX4UFxoRb1gb9sRx1Ga9oxaVuK"
-)  # Private key in WIF format XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+)
 my_public_key = my_private_key.pub
 my_address = P2PKHBitcoinAddress.from_pubkey(my_public_key)
 
@@ -54,7 +54,7 @@ def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubK
 if __name__ == "__main__":
     amount_to_send = 0.005
 
-    txid_to_spend = "221a9452c99937c241acce0bcefbd3de4b26e4eecf897bc6ab8625999ec8f269"  # TxHash of UTXO
+    txid_to_spend = "221a9452c99937c241acce0bcefbd3de4b26e4eecf897bc6ab8625999ec8f269"
     utxo_index = 1
     txout_scriptPubKey = P2PKH_scriptPubKey(my_public_key)
     response = make_transaction(

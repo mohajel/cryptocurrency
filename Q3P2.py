@@ -1,4 +1,5 @@
-# DONE
+# In the Name of God
+
 from bitcoin.wallet import CBitcoinAddress, CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
 from bitcoin.core import COIN, b2lx, serialize, x, lx, b2x

@@ -1,4 +1,5 @@
-# DONE
+# In the Name of God
+
 from bitcoin.wallet import CBitcoinAddress, CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
 from bitcoin.core import COIN, b2lx, serialize, x, lx, b2x
@@ -68,7 +69,7 @@ def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubK
 if __name__ == "__main__":
     amount_to_send = 0.008
 
-    txid_to_spend = "57323a8f28a59eb666b11eb69921a137178e938a0150289925b26685b499c70c"  # TxHash of UTXO
+    txid_to_spend = "57323a8f28a59eb666b11eb69921a137178e938a0150289925b26685b499c70c"
     utxo_index = 0
 
     txout_scriptPubKey = multisig_locking_script(key3.pub, key4.pub, key5.pub)

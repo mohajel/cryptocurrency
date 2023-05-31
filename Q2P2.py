@@ -1,4 +1,5 @@
-# DONE
+# In the Name of God
+
 from bitcoin.wallet import CBitcoinAddress, CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
 from bitcoin.core import COIN, b2lx, serialize, x, lx, b2x
@@ -32,10 +33,7 @@ my_public_key = key3.pub
 
 
 def P2PKH_scriptPubKey(public_key):
-    ######################################################################
-    ## Fill out the operations for P2PKH scriptPubKey                   ##
     return [OP_DUP, OP_HASH160, Hash160(public_key), OP_EQUALVERIFY, OP_CHECKSIG]
-    ######################################################################
 
 
 def multisig_locking_script(public_key_1, public_key_2, public_key_3):
@@ -55,14 +53,11 @@ def multisig_unlocking_script(
 
 
 def P2PKH_scriptSig(txin, txout, txin_scriptPubKey):
-    ######################################################################
-    ## Fill out the operations for P2PKH scriptSig                      ##
     signature = create_OP_CHECKSIG_signature(
         txin, txout, txin_scriptPubKey, my_private_key
     )
 
-    return [signature, my_public_key]  # Fill this section
-    ######################################################################
+    return [signature, my_public_key]
 
 
 def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey):
