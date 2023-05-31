@@ -1,32 +1,34 @@
-# import bitcoin.wallet
+# DONE
 from bitcoin.wallet import CBitcoinAddress, CBitcoinSecret, P2PKHBitcoinAddress
 import bitcoin
 from bitcoin.core import COIN, b2lx, serialize, x, lx, b2x
 from utils import *
 
+bitcoin.SelectParams("testnet")
 
+key1 = CBitcoinSecret("cTkSSMQbC9pxYKf1iRPTZ69pjcWP1bS2vAGhDMPV32izxKXtiU6u")
+key1_addr = P2PKHBitcoinAddress.from_pubkey(key1.pub)
 
-output_address1 = "miipFUHTcVny29mPgsobSEAtS4sAXazFBv"
-output_address2 = "mjLRVq15q6Qwpn4fQyzSLsjzYCq6aLRmjs"
-output_address3 = "mhPavQtru2CbGb3acy14ArLC8w95MRBSvw"
+key2 = CBitcoinSecret("cNuJHQPJ417DT55KgNbvVNzKXXLX4UFxoRb1gb9sRx1Ga9oxaVuK")
+key2_addr = P2PKHBitcoinAddress.from_pubkey(key2.pub)
 
-bitcoin.SelectParams("testnet") # Select the network (testnet or mainnet)
-first_user_prk = CBitcoinSecret("93R6C1uspBV9RFtNXjc1oEFZXA494HMjZBNUpKueZhPx2iFVAWG")
-second_user_prk = CBitcoinSecret("92h8FzaffymGV8JZgYtTwNmeK2QNVXvKEms7yVtDUoyRtHpG2YN")
-third_user_prk = CBitcoinSecret("91rEuvZai6xBjbSAX4qdL4tWBj8ANktypVhKkjwQciUfB71noZx")
+key3 = CBitcoinSecret("cVTTtWtqqiqouZfaNiDck2eYoT8FDyg82TsFBKhWEgnq8pa7LjHG")
+key3_addr = P2PKHBitcoinAddress.from_pubkey(key3.pub)
 
-first_user_pub = first_user_prk.pub
-second_user_pub = second_user_prk.pub
-third_user_pub = third_user_prk.pub
+key4 = CBitcoinSecret("cVcbvpStwtvL91yQWAzReREQHJe2gNb5x2VCDSnkmnngvMM5eKWK")
+key4_addr = P2PKHBitcoinAddress.from_pubkey(key4.pub)
 
-my_private_key = CBitcoinSecret("93R6C1uspBV9RFtNXjc1oEFZXA494HMjZBNUpKueZhPx2iFVAWG") # Private key in WIF format XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-my_public_key = my_private_key.pub
-my_address = P2PKHBitcoinAddress.from_pubkey(my_public_key)
-# destination_address = CBitcoinAddress('mvpwgfvoWc6Bv8R6f5h3JUYQnjesWNAKdZ') # Destination address (recipient of the money)
+key5 = CBitcoinSecret("cT4RSXGDp7Fa7aMfFr7zaocNbGy7gW53MLwGsygV6dWfzHfwLHM1")
+key5_addr = P2PKHBitcoinAddress.from_pubkey(key5.pub)
 
+# mmd27WqESsqtBAAp2XZAp9VWC4Qy8jJUnT
+# mxpf6p8WE7tUmYoPZSwJ9HbTYARZo6SQFw
+# mr5euUubdz2MBaP6CQJSjoFdyzfYju2ov8
+# mshR5fsbimUp8hJ9JReRs5vLNVXnY1FJKn
+# mn6na19twmjVicKvnkHpYypn8mJs6F5e1b
 
-
-
+my_private_key = key3
+my_public_key = key3.pub
 
 def P2PKH_scriptPubKey(public_key):
     ######################################################################
@@ -66,30 +68,22 @@ def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubK
 def make_multisig_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey):
     txout = create_txout(amount_to_send, txout_scriptPubKey)
 
-    txin_scriptPubKey = multisig_locking_script(first_user_pub, second_user_pub, third_user_pub)
+    txin_scriptPubKey = multisig_locking_script(key3.pub, key4.pub, key5.pub)
     txin = create_txin(txid_to_spend, utxo_index)
-    txin_scriptSig = multisig_unlocking_script(txin, txout, txin_scriptPubKey, second_user_prk, third_user_prk)
+    txin_scriptSig = multisig_unlocking_script(txin, txout, txin_scriptPubKey, key3, key4)
 
     new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey, txin_scriptSig)
 
     return broadcast_transaction(new_tx)
 
 if __name__ == '__main__':
-    ######################################################################
-    amount_to_send = 0.008
+    amount_to_send = 0.0075
+    txid_to_spend = ('31f24a5bd8144bcd1f577a5912d389797d43208575588f0be0f47246f560e152')
+    utxo_index = 0
 
-    txid_to_spend = ('4ad64a8fc862f43495af8bd713f689eb18450d77e6b23fcd5188cc99b02dbea9') # TxHash of UTXO
-    utxo_index = 0 # UTXO index among transaction outputs
-    ######################################################################
-
-    print(my_address) # Prints your address in base58
-    print(my_public_key.hex()) # Print your public key in hex
-    print(my_private_key.hex()) # Print your private key in hex
     txout_scriptPubKey = P2PKH_scriptPubKey(my_public_key)
     response = make_multisig_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey)
 
-
-
     print(response.status_code, response.reason)
-    print(response.text) # Report the hash of transaction which is printed in this section result
+    print(response.text)
 

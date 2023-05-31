@@ -13,7 +13,7 @@ def create_random_private_key_hex():
     private_key_hex = hex(private_key_int)[2:].zfill(64)
     return private_key_hex
 
-def get_checksum_hex():
+def get_checksum_hex(address_bytes):
     # the first 4 bytes of hash256(prefix + private key + comparision byte)
     checksum = hashlib.sha256(hashlib.sha256(address_bytes).digest()).digest()[:4]
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 1: # no input
         private_key = create_random_private_key_hex()
-        # private_key = "064f8f0bebfa2f65db003b56bc911535614f2764799bc89091398c1aed82e884"
+        # private_key = "b808aa179b0a2849abb2a78ab9a7ad1452170e5c97af06d0dcbbbbbcef89a00c"
         address = get_address(private_key, type="testnet")
     else:
         characters = sys.argv[1]
