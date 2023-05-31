@@ -30,26 +30,38 @@ key5_addr = P2PKHBitcoinAddress.from_pubkey(key5.pub)
 my_private_key = key3
 my_public_key = key3.pub
 
+
 def P2PKH_scriptPubKey(public_key):
     ######################################################################
     ## Fill out the operations for P2PKH scriptPubKey                   ##
     return [OP_DUP, OP_HASH160, Hash160(public_key), OP_EQUALVERIFY, OP_CHECKSIG]
     ######################################################################
 
-def multisig_locking_script(public_key_1, public_key_2, public_key_3):
-    return [OP_2 , public_key_1, public_key_2, public_key_3, OP_3, OP_CHECKMULTISIG]
 
-def multisig_unlocking_script(txin, txout, txin_scriptPubKey, private_key1, private_key2):
-    first_user_signature = create_OP_CHECKSIG_signature(txin, txout, txin_scriptPubKey, private_key1)
-    second_user_signature = create_OP_CHECKSIG_signature(txin, txout, txin_scriptPubKey, private_key2)
+def multisig_locking_script(public_key_1, public_key_2, public_key_3):
+    return [OP_2, public_key_1, public_key_2, public_key_3, OP_3, OP_CHECKMULTISIG]
+
+
+def multisig_unlocking_script(
+    txin, txout, txin_scriptPubKey, private_key1, private_key2
+):
+    first_user_signature = create_OP_CHECKSIG_signature(
+        txin, txout, txin_scriptPubKey, private_key1
+    )
+    second_user_signature = create_OP_CHECKSIG_signature(
+        txin, txout, txin_scriptPubKey, private_key2
+    )
     return [OP_0, first_user_signature, second_user_signature]
+
 
 def P2PKH_scriptSig(txin, txout, txin_scriptPubKey):
     ######################################################################
     ## Fill out the operations for P2PKH scriptSig                      ##
-    signature = create_OP_CHECKSIG_signature(txin, txout, txin_scriptPubKey, my_private_key)
+    signature = create_OP_CHECKSIG_signature(
+        txin, txout, txin_scriptPubKey, my_private_key
+    )
 
-    return [signature, my_public_key] #Fill this section
+    return [signature, my_public_key]  # Fill this section
     ######################################################################
 
 
@@ -60,30 +72,36 @@ def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubK
     txin = create_txin(txid_to_spend, utxo_index)
     txin_scriptSig = P2PKH_scriptSig(txin, txout, txin_scriptPubKey)
 
-    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey,
-                                       txin_scriptSig)
+    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey, txin_scriptSig)
 
     return broadcast_transaction(new_tx)
 
-def make_multisig_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey):
+
+def make_multisig_transaction(
+    amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey
+):
     txout = create_txout(amount_to_send, txout_scriptPubKey)
 
     txin_scriptPubKey = multisig_locking_script(key3.pub, key4.pub, key5.pub)
     txin = create_txin(txid_to_spend, utxo_index)
-    txin_scriptSig = multisig_unlocking_script(txin, txout, txin_scriptPubKey, key3, key4)
+    txin_scriptSig = multisig_unlocking_script(
+        txin, txout, txin_scriptPubKey, key3, key4
+    )
 
     new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey, txin_scriptSig)
 
     return broadcast_transaction(new_tx)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     amount_to_send = 0.0075
-    txid_to_spend = ('31f24a5bd8144bcd1f577a5912d389797d43208575588f0be0f47246f560e152')
+    txid_to_spend = "31f24a5bd8144bcd1f577a5912d389797d43208575588f0be0f47246f560e152"
     utxo_index = 0
 
     txout_scriptPubKey = P2PKH_scriptPubKey(my_public_key)
-    response = make_multisig_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey)
+    response = make_multisig_transaction(
+        amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey
+    )
 
     print(response.status_code, response.reason)
     print(response.text)
-

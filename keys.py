@@ -3,7 +3,7 @@ import bitcoin
 from bitcoin.core import b2x, Hash
 from utils import *
 
-bitcoin.SelectParams("testnet") 
+bitcoin.SelectParams("testnet")
 
 key1 = CBitcoinSecret("cTkSSMQbC9pxYKf1iRPTZ69pjcWP1bS2vAGhDMPV32izxKXtiU6u")
 key1_addr = P2PKHBitcoinAddress.from_pubkey(key1.pub)

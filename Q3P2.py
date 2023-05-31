@@ -31,43 +31,64 @@ my_private_key = key5
 my_public_key = key5.pub
 my_address = P2PKHBitcoinAddress.from_pubkey(my_public_key)
 
-def customized_locking_script(sum_nums:bytes, sub_nums:bytes):
-    return [OP_2DUP, OP_ADD, OP_HASH160, Hash160(sum_nums), OP_EQUALVERIFY, OP_SUB, OP_HASH160, Hash160(sub_nums), OP_EQUAL]
 
-def customized_unlocking_script(prime_num1:bytes, prime_num2:bytes):
+def customized_locking_script(sum_nums: bytes, sub_nums: bytes):
+    return [
+        OP_2DUP,
+        OP_ADD,
+        OP_HASH160,
+        Hash160(sum_nums),
+        OP_EQUALVERIFY,
+        OP_SUB,
+        OP_HASH160,
+        Hash160(sub_nums),
+        OP_EQUAL,
+    ]
+
+
+def customized_unlocking_script(prime_num1: bytes, prime_num2: bytes):
     return [prime_num1, prime_num2]
 
+
 def P2PKH_scriptSig(txin, txout, txin_scriptPubKey):
-    signature = create_OP_CHECKSIG_signature(txin, txout, txin_scriptPubKey, my_private_key)
+    signature = create_OP_CHECKSIG_signature(
+        txin, txout, txin_scriptPubKey, my_private_key
+    )
 
     return [signature, my_public_key]
+
 
 def P2PKH_scriptPubKey(public_key):
     return [OP_DUP, OP_HASH160, Hash160(public_key), OP_EQUALVERIFY, OP_CHECKSIG]
 
 
-def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey, prime_num1, prime_num2, sum_nums, sub_nums):
-
-    prime_num1 = prime_num1.to_bytes(1, 'little')
-    prime_num2 = prime_num2.to_bytes(1, 'little')
+def make_transaction(
+    amount_to_send,
+    txid_to_spend,
+    utxo_index,
+    txout_scriptPubKey,
+    prime_num1,
+    prime_num2,
+    sum_nums,
+    sub_nums,
+):
+    prime_num1 = prime_num1.to_bytes(1, "little")
+    prime_num2 = prime_num2.to_bytes(1, "little")
     txout = create_txout(amount_to_send, txout_scriptPubKey)
-    
+
     txin_scriptPubKey = customized_locking_script(sum_nums, sub_nums)
     txin = create_txin(txid_to_spend, utxo_index)
     txin_scriptSig = customized_unlocking_script(prime_num1, prime_num2)
 
-    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey,
-                                       txin_scriptSig)
+    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey, txin_scriptSig)
 
     return broadcast_transaction(new_tx)
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     amount_to_send = 0.005
 
-    txid_to_spend = ('69b1e7f58eff5a276a5be81d763608a16efd43a3f86ee9fc98ef927498523056') # TxHash of UTXO
+    txid_to_spend = "69b1e7f58eff5a276a5be81d763608a16efd43a3f86ee9fc98ef927498523056"  # TxHash of UTXO
     utxo_index = 0
 
     number_1 = 91
@@ -75,13 +96,20 @@ if __name__ == '__main__':
     sum = number_1 + number_2
     sub = number_1 - number_2
 
-    sum_bytes = sum.to_bytes(1, 'little')
-    sub_bytes = sub.to_bytes(1, 'little')
-    
+    sum_bytes = sum.to_bytes(1, "little")
+    sub_bytes = sub.to_bytes(1, "little")
 
     txout_scriptPubKey = P2PKH_scriptPubKey(my_public_key)
-    response = make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey, number_1, number_2, sum_bytes, sub_bytes)
+    response = make_transaction(
+        amount_to_send,
+        txid_to_spend,
+        utxo_index,
+        txout_scriptPubKey,
+        number_1,
+        number_2,
+        sum_bytes,
+        sub_bytes,
+    )
 
     print(response.status_code, response.reason)
     print(response.text)
-

@@ -6,6 +6,7 @@ import base58
 import secrets
 import sys
 
+
 def create_random_private_key_hex():
     # Generate a random 256-bit number
     private_key_int = secrets.randbits(256)
@@ -13,21 +14,23 @@ def create_random_private_key_hex():
     private_key_hex = hex(private_key_int)[2:].zfill(64)
     return private_key_hex
 
+
 def get_checksum_hex(address_bytes):
     # the first 4 bytes of hash256(prefix + private key + comparision byte)
     checksum = hashlib.sha256(hashlib.sha256(address_bytes).digest()).digest()[:4]
 
 
-def hex_to_wif(hex, prefix = "ef", compressed = True):
+def hex_to_wif(hex, prefix="ef", compressed=True):
     compressed_hex = ""
     if compressed:
         compressed_hex = "01"
-    hex = prefix + hex + compressed_hex 
+    hex = prefix + hex + compressed_hex
     bytes_string = bytes.fromhex(hex)
-    checksum = hashlib.sha256( hashlib.sha256(bytes_string).digest()).digest()[:4]
+    checksum = hashlib.sha256(hashlib.sha256(bytes_string).digest()).digest()[:4]
     hex = hex + checksum.hex()
 
     return base58.b58encode(bytes.fromhex(hex)).decode()
+
 
 def get_address(private_key_hex, type="testnet"):
     # Convert private key from hexadecimal to bytes
@@ -49,7 +52,9 @@ def get_address(private_key_hex, type="testnet"):
     version_ripemd160_hash = b"\x6f" + ripemd160_hash
 
     # Compute checksum by hashing the version + RIPEMD-160 hash twice and taking the first 4 bytes
-    checksum = hashlib.sha256(hashlib.sha256(version_ripemd160_hash).digest()).digest()[:4]
+    checksum = hashlib.sha256(hashlib.sha256(version_ripemd160_hash).digest()).digest()[
+        :4
+    ]
 
     # Concatenate the version + RIPEMD-160 hash + checksum
     address_bytes = version_ripemd160_hash + checksum
@@ -59,24 +64,23 @@ def get_address(private_key_hex, type="testnet"):
     return address
 
 
-def generate_vanity_address(characters, type = "testnet"):
+def generate_vanity_address(characters, type="testnet"):
     while True:
         private_key = create_random_private_key_hex()
         address = get_address(private_key, type="testnet")
-        if address[1:].startswith(characters): # may start with m ,2 ,n
+        if address[1:].startswith(characters):  # may start with m ,2 ,n
             return private_key, address
 
-if __name__ == "__main__":
 
-    if len(sys.argv) == 1: # no input
+if __name__ == "__main__":
+    if len(sys.argv) == 1:  # no input
         private_key = create_random_private_key_hex()
         # private_key = "b808aa179b0a2849abb2a78ab9a7ad1452170e5c97af06d0dcbbbbbcef89a00c"
         address = get_address(private_key, type="testnet")
     else:
         characters = sys.argv[1]
         private_key, address = generate_vanity_address(characters, type="testnet")
-        
+
     print("Private Key Hex:", private_key)
     print("Private Key WIF:", hex_to_wif(private_key, compressed=True))
     print("Bitcoin Address:", address)
-

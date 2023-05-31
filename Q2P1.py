@@ -31,20 +31,28 @@ my_private_key = key2
 my_public_key = key2.pub
 my_address = P2PKHBitcoinAddress.from_pubkey(my_public_key)
 
+
 def P2PKH_scriptPubKey(public_key):
     return [OP_DUP, OP_HASH160, Hash160(public_key), OP_EQUALVERIFY, OP_CHECKSIG]
 
 
 def multisig_locking_script(public_key_1, public_key_2, public_key_3):
-    return [OP_2 , public_key_1, public_key_2, public_key_3, OP_3, OP_CHECKMULTISIG]
+    return [OP_2, public_key_1, public_key_2, public_key_3, OP_3, OP_CHECKMULTISIG]
+
 
 def P2PKH_scriptSig(txin, txout, txin_scriptPubKey):
-    signature = create_OP_CHECKSIG_signature(txin, txout, txin_scriptPubKey, my_private_key)
-    return [signature, my_public_key] 
+    signature = create_OP_CHECKSIG_signature(
+        txin, txout, txin_scriptPubKey, my_private_key
+    )
+    return [signature, my_public_key]
+
 
 def P2PKH_scriptSig_2output(txin, txout1, txout2, txin_scriptyPubKey):
-    signature = create_OP_CHECKMULTISIG_signature(txin, txout1, txout2, txin_scriptyPubKey, my_private_key)
+    signature = create_OP_CHECKMULTISIG_signature(
+        txin, txout1, txout2, txin_scriptyPubKey, my_private_key
+    )
     return [signature, my_public_key]
+
 
 def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey):
     txout = create_txout(amount_to_send, txout_scriptPubKey)
@@ -53,22 +61,20 @@ def make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubK
     txin = create_txin(txid_to_spend, utxo_index)
     txin_scriptSig = P2PKH_scriptSig(txin, txout, txin_scriptPubKey)
 
-    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey,
-                                       txin_scriptSig)
-
+    new_tx = create_signed_transaction(txin, txout, txin_scriptPubKey, txin_scriptSig)
     return broadcast_transaction(new_tx)
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     amount_to_send = 0.008
 
-    txid_to_spend = ('57323a8f28a59eb666b11eb69921a137178e938a0150289925b26685b499c70c') # TxHash of UTXO
+    txid_to_spend = "57323a8f28a59eb666b11eb69921a137178e938a0150289925b26685b499c70c"  # TxHash of UTXO
     utxo_index = 0
 
     txout_scriptPubKey = multisig_locking_script(key3.pub, key4.pub, key5.pub)
-    response = make_transaction(amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey)
+    response = make_transaction(
+        amount_to_send, txid_to_spend, utxo_index, txout_scriptPubKey
+    )
 
     print(response.status_code, response.reason)
     print(response.text)
-
